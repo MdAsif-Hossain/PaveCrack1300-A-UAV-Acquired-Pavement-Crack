@@ -275,8 +275,12 @@ if len(ii):
         print(f"   {df.sample_id[a]}  ~  {df.sample_id[b]}  (Hamming={D[a,b]})")""")
 
 md(r"""### 3.6  Task A summary — imbalance verdict → loss strategy for Task E
-- **Pixel imbalance:** crack ≈ **11%** vs background ≈ **89%** (≈ 8:1). Moderate, not extreme (crack is not a
-  <1% rare class), so no aggressive resampling is required.
+- **Pixel imbalance (from masks):** crack ≈ **11%** vs background ≈ **89%** (≈ 8:1). Moderate, not extreme
+  (crack is not a <1% rare class), so no aggressive resampling is required.
+- **Data-quality finding:** the released `crack_pixel_count` metadata column is inconsistent with the masks and
+  with `crack_pixel_ratio`; we compute all pixel statistics from the masks directly and ignore that column.
+- **Duplicate finding:** the dHash scan flagged an exact-duplicate pair (`crack_1086` ≈ `crack_1091`), which our
+  grouping keeps together so it cannot leak across splits.
 - **Consequence for Task E:** we will use **Dice loss + lightly class-weighted Cross-Entropy** (weight the crack
   class up, capped to avoid gradient spikes). Dice directly optimizes overlap of the minority class; the light
   CE weight nudges recall without destabilizing training.
@@ -317,9 +321,8 @@ n_groups = df["group"].nunique()
 print(f"samples={n}  ->  empirical groups={n_groups}  "
       f"(near-dup clusters merged; {n - n_groups} patches absorbed as duplicates)")
 
-# ---- 2) stratified group split 70/15/15 by crack density ----
-gdf = df.groupby("group")["crack_pixel_ratio"].mean() if "crack_pixel_ratio" in df.columns \
-      else df.groupby("group").apply(lambda d: np.mean([100*(np.array(Image.open(m))>0).mean() for m in d.mask_path]))
+# ---- 2) stratified group split 70/15/15 by crack density (mask-derived, authoritative) ----
+gdf = df.groupby("group")["crack_ratio_mask"].mean()
 strata = pd.qcut(gdf.rank(method="first"), q=N_STRATA, labels=False)
 rng = np.random.RandomState(SEED)
 train_g, val_g, test_g = set(), set(), set()
@@ -341,7 +344,7 @@ assert len(s_train)+len(s_val)+len(s_test) == n
 print("LEAKAGE CHECK PASSED — no group and no sample crosses splits.")
 for sp in ["train","val","test"]:
     sub = df[df.split==sp]
-    cov = sub["crack_pixel_ratio"].mean() if "crack_pixel_ratio" in sub.columns else float("nan")
+    cov = sub["crack_ratio_mask"].mean()
     print(f"  {sp:5s}: {len(sub):4d} imgs ({100*len(sub)/n:4.1f}%) | mean crack coverage {cov:5.2f}%")""")
 
 md(r"""### 4.1  Class weights + save split artifacts
