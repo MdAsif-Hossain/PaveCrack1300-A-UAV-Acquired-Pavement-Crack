@@ -15,6 +15,15 @@
 
 <p align="center"><img src="figures/nb3_taskH_qualitative_grid.png" width="920" alt="Side-by-side predictions of all three models on the same test images"></p>
 
+<p align="center">
+  📓 <b><a href="notebooks/">Notebooks</a></b> &nbsp;·&nbsp;
+  📊 <b><a href="figures/">Figures</a></b> &nbsp;·&nbsp;
+  🎓 <b><a href="VIVA_QUESTIONS_ANSWERED.md">Viva Questions — Answered</a></b>
+</p>
+
+> 🎓 **Preparing for the viva?** Every coding & theory question from the assignment is answered in plain English in
+> **→ [`VIVA_QUESTIONS_ANSWERED.md`](VIVA_QUESTIONS_ANSWERED.md)**.
+
 ---
 
 ## 📌 TL;DR
@@ -274,9 +283,9 @@ The notebooks are built to run on **Kaggle (T4 GPU)** with the dataset attached.
 2. **Notebooks 2 & 3** — attach the raw dataset **+** Notebook 1's committed output, GPU on, *Run All*, **Commit**.
 3. **Notebook 4** — attach the raw dataset + Notebooks 1/2/3 outputs, Internet **+** GPU on, *Run All*. It trains YOLO and produces the full Task-H comparison.
 
-Notebooks are authored from reproducible **Python builders** in [`builders/`](builders/) (every code cell is syntax-checked,
-and a fairness audit asserts NB2/NB3 differ only in the model cell). Figures are re-extractable via
-[`builders/extract_figures.py`](builders/extract_figures.py).
+To keep the benchmark fair, the two PyTorch notebooks (DeepLabV3 & SegFormer) share a **byte-identical pipeline** —
+the same dataset class, augmentation, loss, metrics, optimizer, schedule and seed — so the *only* difference between them
+is the model definition itself.
 
 ---
 
@@ -293,7 +302,6 @@ and a fairness audit asserts NB2/NB3 differ only in the model cell). Figures are
 │   ├── 3_seg-segformer-b0.ipynb     ← SegFormer-B0
 │   └── 4_seg-yolov26-semantic.ipynb ← YOLOv26-Sem + final 3-model comparison
 ├── figures/                         ← all 22 charts used in this README
-├── builders/                        ← Python notebook-builders + figure extractor
 └── Sec 4 - Assignment Part A.pdf    ← the assignment spec
 ```
 
