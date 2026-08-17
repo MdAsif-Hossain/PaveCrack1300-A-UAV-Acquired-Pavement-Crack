@@ -13,3 +13,19 @@ Thumbs.db
 *.pt
 *.pth
 *.safetensors
+
+# Assignment 2 report + viva material — coursework deliverables, not for GitHub
+Assignment 2/report/
+Assignment 2/VIVA_PREP.html
+Assignment 2/executed/
+
+# LaTeX build artefacts
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.toc
