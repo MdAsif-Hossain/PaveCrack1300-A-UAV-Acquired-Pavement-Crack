@@ -29,3 +29,7 @@ Assignment 2/executed/
 *.bbl
 *.blg
 *.toc
+
+# Research — generated artifacts
+Research/figures_preview/
+Research/code/**/__pycache__/
